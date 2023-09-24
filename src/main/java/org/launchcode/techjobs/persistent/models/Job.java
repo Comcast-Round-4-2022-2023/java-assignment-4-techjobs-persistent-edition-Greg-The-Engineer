@@ -1,5 +1,6 @@
 package org.launchcode.techjobs.persistent.models;
 
+
 import javax.persistence.*;
 
 @Entity
