@@ -41,11 +41,11 @@ public class ListController {
 
     @RequestMapping("")
     public String list(Model model) {
-        // Add some default attributes to the model
-        model.addAttribute("title", "All Jobs"); // For example, setting a default title
-        model.addAttribute("jobs", jobRepository.findAll()); // Add a list of all jobs
+        model.addAttribute("employers", employerRepository.findAll());
+        model.addAttribute("skills", skillRepository.findAll());
         return "list";
     }
+
 
     @RequestMapping(value = "jobs")
     public String listJobsByColumnAndValue(Model model, @RequestParam String column, @RequestParam String value) {
