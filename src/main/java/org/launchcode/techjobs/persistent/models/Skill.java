@@ -13,7 +13,7 @@ public class Skill extends AbstractEntity {
     @Size(min = 1, max = 255, message = "Name must be between 1 and 255 characters")
     private String name;
 
-    private String description; // Add this field
+    private String description;
 
     public Skill() {
         // Default constructor for Hibernate
