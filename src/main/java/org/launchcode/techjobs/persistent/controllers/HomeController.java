@@ -2,7 +2,9 @@ package org.launchcode.techjobs.persistent.controllers;
 
 import org.launchcode.techjobs.persistent.models.Job;
 import org.launchcode.techjobs.persistent.models.Employer;
+import org.launchcode.techjobs.persistent.models.Skill;
 import org.launchcode.techjobs.persistent.models.data.EmployerRepository;
+import org.launchcode.techjobs.persistent.models.data.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +24,9 @@ public class HomeController {
     @Autowired
     private EmployerRepository employerRepository;
 
+    @Autowired
+    private SkillRepository skillRepository; // Inject SkillRepository
+
     @RequestMapping("")
     public String index(Model model) {
         model.addAttribute("title", "My Jobs");
@@ -33,17 +38,23 @@ public class HomeController {
         model.addAttribute("title", "Add Job");
         model.addAttribute("job", new Job());
 
-        // Load employer data into the form
+        // Load employer and skill data into the form
         List<Employer> employers = new ArrayList<>();
+        List<Skill> skills = new ArrayList<>(); // Add skills
         employerRepository.findAll().forEach(employers::add);
+        skillRepository.findAll().forEach(skills::add); // Load skills
         model.addAttribute("employers", employers);
+        model.addAttribute("skills", skills); // Add skills to the model
 
         return "add";
     }
 
+
     @PostMapping("add")
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
-                                    Errors errors, Model model, @RequestParam int employerId, @RequestParam List<Integer> skills) {
+                                    Errors errors, Model model,
+                                    @RequestParam int employerId,
+                                    @RequestParam List<Integer> skills) {
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Job");
             return "add";
@@ -53,9 +64,11 @@ public class HomeController {
         Employer selectedEmployer = employerRepository.findById(employerId).orElse(null);
         newJob.setEmployer(selectedEmployer);
 
-        // Your logic for handling skills...
+        // Select the skill objects based on the provided skill ids
+        List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
+        newJob.setSkills(skillObjs);
 
-        // Save the new job and perform other necessary operations
+        // Your logic for saving the new job...
 
         return "redirect:";
     }

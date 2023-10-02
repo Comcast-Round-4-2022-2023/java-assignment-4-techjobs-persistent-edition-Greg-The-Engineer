@@ -18,7 +18,7 @@ public class Employer extends AbstractEntity {
 
     // Add the jobs field with the necessary annotations
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
-    @JoinColumn(name = "employer_id") // Add this line
+//    @JoinColumn(name = "employer_id")
     private List<Job> jobs = new ArrayList<>();
 
     // Getters and setters for location and jobs...
