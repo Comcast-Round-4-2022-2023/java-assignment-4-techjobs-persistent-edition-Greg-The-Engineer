@@ -1,5 +1,7 @@
 package org.launchcode.techjobs.persistent.controllers;
 
+import org.launchcode.techjobs.persistent.models.data.EmployerRepository;
+import org.launchcode.techjobs.persistent.models.data.JobRepository;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.launchcode.techjobs.persistent.models.Skill;
@@ -20,15 +22,22 @@ public class SkillController {
     @Autowired
     private SkillRepository skillRepository;
 
-    @GetMapping("")
+    @Autowired
+    private JobRepository jobRepository;
+
+    @Autowired
+    private EmployerRepository employerRepository;
+
+    @RequestMapping("")
     public String index(Model model) {
-        Iterable<Skill> skills = skillRepository.findAll();
-        model.addAttribute("skills", skills);
+        model.addAttribute("title", "All Skills");
+        model.addAttribute("skills", skillRepository.findAll());
         return "skills/index";
     }
 
     @GetMapping("add")
     public String displayAddSkillForm(Model model) {
+        model.addAttribute("title", "All Skills");
         model.addAttribute(new Skill());
         return "skills/add";
     }
@@ -42,7 +51,7 @@ public class SkillController {
         }
 
         skillRepository.save(newSkill);
-        return "redirect:/skills";
+        return "redirect:";
     }
 
     @GetMapping("view/{skillId}")

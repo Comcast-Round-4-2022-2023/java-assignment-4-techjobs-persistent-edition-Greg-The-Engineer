@@ -4,23 +4,25 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.persistence.CascadeType;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Entity
 public class Employer extends AbstractEntity {
-    @NotBlank(message = "Location is required")
-    @Size(max = 100, message = "Location must be less than or equal to 100 characters")
+
+    @NotEmpty @NotNull @Size(min = 0, max = 60)
     private String location;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "employer_id")
-    private List<Job> jobs = new ArrayList<>();
+    @OneToMany @JoinColumn(name = "employer_id")
+    private final List<Job> jobs = new ArrayList<>();
 
-    // Getters and setters for location and jobs...
+    public Employer(){};
+
+    public Employer(String location) {this.location = location;}
 
     public String getLocation() {
         return location;
@@ -32,9 +34,5 @@ public class Employer extends AbstractEntity {
 
     public List<Job> getJobs() {
         return jobs;
-    }
-
-    public void setJobs(List<Job> jobs) {
-        this.jobs = jobs;
     }
 }

@@ -2,26 +2,20 @@ package org.launchcode.techjobs.persistent.models;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
-//import javax.persistence.Entity;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.Id;
-//import javax.persistence.ManyToOne;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 
 @Entity
 public class Job extends AbstractEntity {
 
-//    @Id
-//    @GeneratedValue
-//    private int id;
-
     @ManyToOne
-    @JoinColumn(name = "employer_id") // Specify the foreign key column name
     private Employer employer;
 
     @ManyToMany
-    private List<Skill> skills;
+    private List<Skill> skills = new ArrayList<>();
 
     public Job() {
     }

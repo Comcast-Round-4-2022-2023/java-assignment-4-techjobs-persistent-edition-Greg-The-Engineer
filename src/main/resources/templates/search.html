@@ -47,10 +47,7 @@
                 <p th:text="${'Name: ' + job.name}"></p>
                 <p>
                     Employer:
-                    <span th:if="${job.employer != null}">
-                        <a th:href="@{'/employers/view/' + ${job.employer.id}}" th:text="${job.employer.name}"></a>
-                    </span>
-                    <span th:unless="${job.employer != null}">N/A</span>
+                    <a th:href="@{'/employers/view/' + ${job.employer.id}}" th:text="${job.employer.name}"></a>
                 </p>
                 <p>
                     Skills:

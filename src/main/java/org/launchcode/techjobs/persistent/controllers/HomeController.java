@@ -11,77 +11,65 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-/**
- * Created by LaunchCode
- */
 @Controller
+@RequestMapping("/")
 public class HomeController {
 
     @Autowired
-    private EmployerRepository employerRepository;
+    EmployerRepository employerRepository;
 
     @Autowired
-    private SkillRepository skillRepository; // Inject SkillRepository
+    JobRepository jobRepository;
 
     @Autowired
-    private JobRepository jobRepository; // Add JobRepository
+    SkillRepository skillRepository;
 
     @RequestMapping("")
     public String index(Model model) {
         model.addAttribute("title", "My Jobs");
+        model.addAttribute("jobs", jobRepository.findAll());
         return "index";
     }
 
     @GetMapping("add")
     public String displayAddJobForm(Model model) {
         model.addAttribute("title", "Add Job");
-        model.addAttribute("job", new Job());
-
-        // Load employer and skill data into the form
-        List<Employer> employers = new ArrayList<>();
-        List<Skill> skills = new ArrayList<>(); // Add skills
-        employerRepository.findAll().forEach(employers::add);
-        skillRepository.findAll().forEach(skills::add); // Load skills
-        model.addAttribute("employers", employers);
-        model.addAttribute("skills", skills); // Add skills to the model
-
+        model.addAttribute("employers", employerRepository.findAll());
+        model.addAttribute("skills", skillRepository.findAll());
+        model.addAttribute(new Job());
         return "add";
     }
 
-
     @PostMapping("add")
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
-                                    Errors errors, Model model,
-                                    @RequestParam int employerId,
+                                    Errors errors, Model model, @RequestParam int employerId,
                                     @RequestParam List<Integer> skills) {
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Job");
             return "add";
         }
-
-        // Select the employer object based on the provided employerId
-        Employer selectedEmployer = employerRepository.findById(employerId).orElse(null);
-        newJob.setEmployer(selectedEmployer);
-
-        // Select the skill objects based on the provided skill ids
+        Employer newEmployer = employerRepository.findById(employerId).orElse(new Employer());
+        newJob.setEmployer(newEmployer);
         List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
         newJob.setSkills(skillObjs);
-
-        // Save the new job using jobRepository
         jobRepository.save(newJob);
-
+        model.addAttribute("job", jobRepository.findAll());
         return "redirect:";
     }
 
     @GetMapping("view/{jobId}")
     public String displayViewJob(Model model, @PathVariable int jobId) {
-        // Your logic for displaying a job...
-
-        return "view";
+        Optional<Job> optJob = jobRepository.findById(jobId);
+        if (optJob.isPresent()) {
+            Job job = optJob.get();
+            model.addAttribute("job", job);
+            return "view";
+        } else {
+            return "redirect:/"; // Redirect to the homepage or handle the case when the job is not found.
+        }
     }
 }
